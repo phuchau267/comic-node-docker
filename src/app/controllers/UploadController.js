@@ -7,6 +7,7 @@ const shortid       = require('shortid');
 const ObjectID      = require('mongodb').ObjectID;
 // Upload Middleware
 const MulterUploadMiddleware = require("../middlewares/MulterUploadMiddleWare");
+const sendNotificationToUser = require("../middlewares/sendNotificationToUser");
 const S3UploadMiddleWare = require("../middlewares/S3UploadMiddleWare")
 const S3DeleteMiddleware = require('../middlewares/S3DeleteMiddleware');
 const imagesMiddle = require("../middlewares/ResizeMiddleware")
@@ -45,7 +46,12 @@ class UploadController {
                     pool.terminate(); 
                 });
                 
+                 /////////////////////////////////////////////  from hau
+                sendNotificationToUser(req.params.slug)
         })
+       
+        
+
         .then(() => res.redirect('back'))
         .catch(err => next(err))
         
@@ -81,6 +87,9 @@ class UploadController {
                 }
             ).then(res => console.log(res))
         };
+
+
+        
     };
 
     thumbnailUpload = async (req, res, next) => {

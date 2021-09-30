@@ -47,9 +47,14 @@ const port = process.env.PORT || 3000;
 // Socket io
 const server = require('http').createServer(app);
 const io     = require('socket.io')(server);
-
+exports.io = io;
 io.on('connection', client => {
     console.log('Users Connected!')
+    client.on('join_notifi_room', notifiRoom =>{
+        client.join(notifiRoom);
+        console.log('user:'+ notifiRoom + ' joined room')
+    })
+    
 
     client.on('join', function(room) {
         client.join(room);
