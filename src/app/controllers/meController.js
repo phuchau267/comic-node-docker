@@ -16,7 +16,8 @@ const removeVietnameseTones = require('../../config/middleware/VnameseToEng');
 const download = require('../../util/download-file');
 const path = require('path');
 
-const filepath = path.resolve(__dirname,'../../public/leech-chapter-img')
+const thumbnailFilepath = path.resolve(__dirname,'../../public/leech-img')
+const chapterImgFilepath = path.resolve(__dirname,'../../public/leech-chapter-img')
 async function autoScroll(page){
   await page.evaluate(async () => {
       await new Promise((resolve, reject) => {
@@ -81,10 +82,10 @@ class meController {
         await page.waitForSelector('#item-detail')
         const comicName = await page.evaluate(() => document.querySelector('#item-detail > .title-detail').textContent);
         console.log(comicName)
-        await Comic.findOne({title:comicName}).lean()
-        .select('_id')
-        .then(async comicDoc => {
-          if(comicDoc){
+        const comicExist = await Comic.findOne({title:comicName}).lean().select('_id')
+        
+        
+          if(comicExist){
             console.log('truyen nay da co roi')
           }else {
             const comicAuthorExist = await page.$('.list-info > .author p a')
@@ -135,7 +136,7 @@ class meController {
             const comicDescription = await page.evaluate(() => document.querySelector('.detail-content > p').textContent);
             const comicImgSrc = await page.$eval("#item-detail img",element=> element.getAttribute("src"))
             const thumbnailName = await removeVietnameseTones(comicName)+'.jpg'
-          //  await download(comicImgSrc,thumbnailfilepath,thumbnailName, (thumbnailName) => {
+          //  await download(comicImgSrc,thumbnailFilepath,thumbnailName, (thumbnailName) => {
           //  console.log(thumbnailName+ ' downloaded')
           //   })
             /////////////////////////////////////////////////////////////////////////////
@@ -208,7 +209,7 @@ class meController {
                 
                 const chapterImgName = removeVietnameseTones(chapterImgAlt)+'.jpg'
                 console.log(chapterImgName)
-                // download(chapterImgSrc,chapterfilepath,chapterImgName, (chapterImgName) => {
+                // download(chapterImgSrc,chapterImgFilepath,chapterImgName, (chapterImgName) => {
                 //   console.log(chapterImgName+ ' downloaded')
                 // })
                 
@@ -223,16 +224,8 @@ class meController {
             } 
 
 
-
-
-
-
-
-
-
-
           }
-        })
+   
         
         
         
@@ -283,10 +276,9 @@ class meController {
           const comicName = await ( await comicCheckName.getProperty( 'innerText' ) ).jsonValue()
           console.log( comicName );
           
-          await Comic.find({title:comicName}).lean()
-          .select('title')
-           .then(async comicDoc =>{
-              if(!comicDoc){
+          const comicExist = await Comic.find({title:comicName}).lean().select('title')
+          
+              if(!comicExist){
                 const comicLink = await comic.$('a')
                 await comicLink.click()
                 await page.waitForSelector('#item-detail')
@@ -319,8 +311,8 @@ class meController {
                 // const comicCategories = await page.$$('.list-info > .kind p a')
                 const comicCategories = await page.evaluate(() => Array.from(document.querySelectorAll('.list-info > .kind p a'), element => element.textContent));
                 
-                for(var i=0;i<comicCategories.length;i++){
-                  Category.findOne({name:comicCategories[i]}).lean()
+                for(var o=0;i<comicCategories.length;i++){
+                  Category.findOne({name:comicCategories[o]}).lean()
                   .select('_id')
                   .then(category => {
                     console.log('id cua the loai ne '+category._id)
@@ -379,12 +371,7 @@ class meController {
                     
                     const chapters = await page.$$('#item-detail  .chapter > a')
 
-
-
             //////////////////////////////// cai nay la sợ giua chung` no update them chapter moi cho nen phai check coi co bi trung chapter vua r ko, neu co trung thi skip qua vong lap tiep theo
-
-
-
                     const chapter = chapters[i]
                     if(i>0){
                     const previousChapter = chapters[i-1]
@@ -423,10 +410,10 @@ class meController {
                 } 
           
             }else{
-              console.log('do nothing')
+              continue
             
             }
-          })
+        
         }
       }
       await browser.close()

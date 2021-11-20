@@ -21,7 +21,7 @@ const { UPDATE_PER_MIN } = require("./config/config")
 const session       = require('express-session');
 const redis     = require(path.resolve('./src/config/redis'))
 const RedisStore = require('connect-redis')(session)
-const leechAutoUpdate = require('./util/leech')
+const leechAutoUpdate = require('./util/leech.js')
 // db and route
 const route = require('./routes');
 const db    = require('./config/db');
