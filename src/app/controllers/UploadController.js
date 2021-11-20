@@ -20,6 +20,7 @@ class UploadController {
     // [POST] / stored /comics /:slug /S3-multiple-upload
     
     multipleUpload = async (req, res, next) => {
+        const chapterId = new ObjectID()
         MulterUploadMiddleware(req, res)
         .then(async () => { 
             let workDir = path.join(__dirname, '..', 'middlewares', 'worker.js')
@@ -47,7 +48,7 @@ class UploadController {
                 });
                 
                  /////////////////////////////////////////////  from hau
-                sendNotificationToUser(req.params.slug)
+                sendNotificationToUser(req.params.slug,req.body.chapter,chapterId)
         })
        
         
@@ -57,7 +58,7 @@ class UploadController {
         
         function saveURLToDb(imagesURL) {
             const newChapter = new Chapter({
-                _id: new ObjectID(),
+                _id: chapterId,
                 title: `chapter of ${req.params.slug}`,
                 chapter: `chapter-${req.body.chapter}`,
                 chapterSlug: `${req.params.slug}-${shortid()}`,

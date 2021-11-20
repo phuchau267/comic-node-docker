@@ -44,7 +44,7 @@ class SiteController {
 
       };
     }
-
+    
     getAuth(req, res, next) {
       
       res.status(200).render('template/auth.template.hbs', {
@@ -52,7 +52,36 @@ class SiteController {
         user: req.user
       })
     }
-
+    getNotification(req, res, next) {
+      User.findOneAndUpdate({_id: req.user._id},{seen:0})
+      .then(() => {
+        console.log('seen = 0 now')
+      })
+      .catch(err => {
+          console.log(err)
+          next(err)
+      })
+      User
+      .findOne({ _id: req.user._id}).lean()
+      .select('notification -_id')
+      .populate({
+        path: 'notification',
+     
+        options: {
+          sort: {createdAt: -1},
+        }
+      })
+    
+      .then(notificationsDoc =>{
+        
+        res.status(200).render('template/notification.template.hbs', {
+          layout: 'fetch_layout',
+          notification: notificationsDoc.notification
+        })
+      })
+      
+    }
+    
     getSubsbribeStatus(req, res, next) {
       if (!req.user) return res.send({login: false})
 

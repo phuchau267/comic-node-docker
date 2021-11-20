@@ -46,7 +46,13 @@ const User = new Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comic"
     }],
-
+    notification: [{ 
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Notification"
+    }],
+    seen: {
+      type: Number,
+      default: 0},
     googleId: String,
     facebookId: String,
     userCreatedAt: String,

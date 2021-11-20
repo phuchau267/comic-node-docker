@@ -21,6 +21,8 @@ router.get('/users', Fetchcontroller.fetchUsers);
 router.get('/sublist', Fetchcontroller.fetchSubList);
 // Route: fetch / auth
 router.get('/getAuth', Fetchcontroller.getAuth);
+// Route: fetch / notification
+router.get('/getNotification', Fetchcontroller.getNotification);
 // Route: fetch / bookmarkContents
 router.post('/bookmarkContents', Fetchcontroller.fetchBookmarkContents);
 // Route: fetch / getSubsbribeStatus

@@ -46,6 +46,7 @@ $(window).scroll(function () {
                 url:`/fetch${$pathname}${fetchParams}/comments${$search}`,
                 contentType: "application/json; charset=utf-8",
                 success: function(result) {
+                    console.log(result)
                     $commentBox.append(result)
                     $userAvatarSrc = $commentBox.find("#my-avatar img").attr('src')
                 },

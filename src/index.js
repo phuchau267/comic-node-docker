@@ -21,12 +21,12 @@ const { UPDATE_PER_MIN } = require("./config/config")
 const session       = require('express-session');
 const redis     = require(path.resolve('./src/config/redis'))
 const RedisStore = require('connect-redis')(session)
-
+const leechAutoUpdate = require('./util/leech')
 // db and route
 const route = require('./routes');
 const db    = require('./config/db');
 
-
+leechAutoUpdate()
 
 // CronJob 
 const MIN = UPDATE_PER_MIN
@@ -47,12 +47,12 @@ const port = process.env.PORT || 3000;
 // Socket io
 const server = require('http').createServer(app);
 const io     = require('socket.io')(server);
-exports.io = io;
+global.io = io;
 io.on('connection', client => {
     console.log('Users Connected!')
     client.on('join_notifi_room', notifiRoom =>{
         client.join(notifiRoom);
-        console.log('user:'+ notifiRoom + ' joined room')
+        console.log('user: '+ notifiRoom + ' joined room')
     })
     
 

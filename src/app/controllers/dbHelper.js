@@ -1,6 +1,8 @@
 const Comic = require('../models/Comic');
+const User = require('../models/User');
 const Chapter = require('../models/Chapter')
 const Category = require('../models/Category')
+const Notification = require('../models/Notification')
 const removeVietnameseTones = require('../../config/middleware/VnameseToEng');
 const trimEng = require('../../config/middleware/trimEng')
 const shortid = require('shortid');
@@ -71,6 +73,7 @@ const CreateComic_Helper = (exports.CreateComic_Helper
 
     const { title, description } = req.body;
     const categoriesInput = req.body.categories;
+    console.log('vi du the loai'+categoriesInput)
     let errors = [];
     checkInput(title, description)
 
@@ -339,9 +342,11 @@ const destroyComic_Helper = (exports.destroyComic_Helper
 
     deleteThumbnail_Images_s3().then(() => {
       return Promise.all([
+      delete_NotificationOfComic_mongodb(),
       delete_Chapters_mongodb(), 
       delete_Comicmongodb_CategoryModel(),
-      delete_chaptersRef()
+      delete_chaptersRef(),
+    
     ]);
     }).then((args) => {
       res.status(200).redirect('back');
@@ -410,6 +415,32 @@ const destroyComic_Helper = (exports.destroyComic_Helper
       });
     };
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////// from hau
+    function delete_NotificationOfComic_mongodb() {
+      return new Promise(async (resolve, reject) => {
+        
+        
+        console.log("--3 Tiến hành Xóa Notification of comic trên mongodb: ")
+        Notification.find({comicSlug: req.params.slug}).lean()
+        .select('_id')
+        .then((notifications) => {
+          notifications.forEach(notification => {
+            User.updateMany({notification: notification._id},{$pull: { notification: notification._id },$inc : {seen : -1}})
+            .then()
+            .catch(err => next(err))
+          })
+            
+        })
+        .catch(err => next(err))
+
+        Notification.deleteMany({comicSlug: req.params.slug})
+          .then((result) => {
+            resolve(result);
+          })
+          .catch(next) /* -- end Third task -- */
+      })
+    };
+
     function delete_Chapters_mongodb() {
       return new Promise((resolve, reject) => {
         // do something async
@@ -451,6 +482,7 @@ const destroyComic_Helper = (exports.destroyComic_Helper
           .catch(next) /* -- end Fourth task -- */
       });
     };
+    
 
     function handleDeleteCategoryModel(comic, categoriesNeedDelete) {
       if (!categoriesNeedDelete) return;
@@ -463,6 +495,7 @@ const destroyComic_Helper = (exports.destroyComic_Helper
       })
     };
 
+    
   });
 
 // 6. handleFormActionForComics_Helper
@@ -621,7 +654,12 @@ const destroyChapter_Helper = (exports.destroyChapter_Helper
 
     delete_chaptersRef().then(() => {
       delete_Chapter_Images_s3().then(() => {
+        delete_NotificationOfChapter_mongodb(),
         delete_Chapter_mongodb()
+      
+        
+        
+
       })
     })
 
@@ -655,6 +693,20 @@ const destroyChapter_Helper = (exports.destroyChapter_Helper
           req.flash('success-message', 'Xóa Chapter Thành Công')
         })
         .catch(next)
+    };
+    //////////////////////////////////////////////////////////////////// from hau
+    async function delete_NotificationOfChapter_mongodb() {
+      Notification.findOne({chapterId: req.params.chapter_id}).lean()
+      .select('_id')
+      .then((notification) => {
+        User.updateMany({notification: notification._id},{$pull: { notification: notification._id },$inc : {seen : -1}})
+        .then()
+        .catch(err => next(err))
+      })
+      Notification.deleteOne({ chapterId: req.params.chapter_id }) //slug của chapters
+      .then()
+      .catch(err => next(err))
+      
     };
 
     async function delete_chaptersRef() {

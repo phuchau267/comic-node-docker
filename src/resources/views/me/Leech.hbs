@@ -1,0 +1,50 @@
+<style>
+    .makeThisTop{
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        transform: translate(-50%,-50%);
+    }
+    .makeThisBot{
+        position: absolute;
+        left: 50%;
+        top: 80%;
+        transform: translate(-50%,-50%);
+    }
+    .ancucdi{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+    }
+</style>
+   <button class="ancucdi" onclick="testLoop()">
+       ancuc
+   </button>
+<form class="makeThisTop" method="POST" action="/me/leech">
+    <label for="comicUrl">nhap url cua comic muon leech</label>
+    <input id="comicUrl"  name="comicUrl" type="text">
+    
+    <button type="submit">OK</button>
+</form>
+<form class="makeThisBot" method="POST" action="/me/autoLeech">
+    <label for="pageStart">tu page</label>
+    <input type="text" id="pageStart" name="pageStart">
+    <label for="pageEnd">den page</label>
+    <input type="text" id="pageEnd" name="pageEnd" >
+    <button type="submit">OK</button>
+</form>
+
+<script>
+    function testLoop(){
+        var chaptersNeedLoop = 5
+        for(i = 0; i < chaptersNeedLoop; i++){
+            
+            if(i === 1){
+                chaptersNeedLoop++
+                continue
+            }
+            console.log(`loop lan thu ${i}`)
+        }
+    }
+</script>

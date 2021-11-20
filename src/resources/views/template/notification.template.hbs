@@ -1,0 +1,23 @@
+
+{{#each notification}}
+<a onclick="" style="display:flex" class="dropdown-item notification-items" href="#">
+
+    <img class="notification-comic-img" style="display:inline-block; border-radius:5px" width="60px" src="{{this.comicImg}}"
+        alt="">
+
+    <div class="notification-comic-text ml-3"
+        style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+            <span style="color:var(--theme-color-1);font-size:20px" class="notification-comic-name">{{this.comic}}</span> <br>
+            <span style="font-size:16px" class="notification-comic-text">{{this.text}}</span>
+        </div>
+
+        <div>
+            <span style="font-size:16px">{{CalcTimeEnglish this.createdAt}}</span>
+        </div>
+    </div>
+
+</a>
+{{/each}}
+
+

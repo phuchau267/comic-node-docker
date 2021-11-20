@@ -27,6 +27,11 @@ router.post('/stored/comics/:slug/S3-thumbnail-upload', UploadController.thumbna
 // Upload Config Image
 router.post('/stored/config/banner/upload', UploadController.configUpload);
 
+router.get('/leech', meController.leechPage);
+router.post('/leech', meController.leechComic);
+router.post('/autoLeech', meController.autoLeech);
+
+
 /**               ***
 ***  COMIC ROUTE  ***
 ***               **/
